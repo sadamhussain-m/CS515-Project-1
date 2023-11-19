@@ -1,39 +1,29 @@
 import json
 import sys
 
-def flatten_json(json_obj, prefix=""):
-    flat_dict = {}
-    if isinstance(json_obj, dict):
-        for key, value in json_obj.items():
-            flat_key = f"{prefix}.{key}" if prefix else key
-            flat_dict.update(flatten_json(value, flat_key))
-    elif isinstance(json_obj, list):
-        for i, element in enumerate(json_obj):
-            flat_key = f"{prefix}[{i}]"
-            flat_dict.update(flatten_json(element, flat_key))
+def gronify(data, parent_key='json', indent=2):
+    if isinstance(data, dict):
+        for k, v in data.items():
+            key = f'{parent_key}.{k}' if parent_key else k
+            gronify(v, key, indent)
+    elif isinstance(data, list):
+        for i, v in enumerate(data):
+            key = f'{parent_key}[{i}]' if parent_key else f'[{i}]'
+            gronify(v, key, indent)
     else:
-        flat_dict[prefix] = json_obj
-    return flat_dict
+        print(f'{parent_key} = {json.dumps(data, indent=indent)}')
 
-def gron(json_content):
-    json_obj = json.loads(json_content)
-    return flatten_json(json_obj)
-
-if __name__ == "__main__":
-   
-    if len(sys.argv) > 1:
-        filename = sys.argv[1]
-        # filename="/home/sadam/Documents/CS-515/CS515-Project-1/prog/data.json"
-        try:
-            with open(filename, 'r') as file:
-                content = file.read()
-        except FileNotFoundError:
-            print(f"Error: File '{filename}' not found.")
-            sys.exit(1)
-    else:
-        content = sys.stdin.read()
-
+if __name__ == '__main__':
+    # Example usage reading JSON from a file
     
-        flattened_json = gron(content)
-        for key, value in flattened_json.items():
-            print(f"json.{key} = {json.dumps(value)};")
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+
+    try:
+        with open(file_path, 'r') as file:
+            json_data = json.load(file)
+            gronify(json_data)
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
