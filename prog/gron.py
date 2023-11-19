@@ -21,17 +21,17 @@ def gron(json_content):
 
 if __name__ == "__main__":
    
-    # if len(sys.argv) > 1:
-    #     filename = sys.argv[1]
-        filename="/home/sadam/Documents/CS-515/CS515-Project-1/prog/data.json"
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+        # filename="/home/sadam/Documents/CS-515/CS515-Project-1/prog/data.json"
         try:
             with open(filename, 'r') as file:
                 content = file.read()
         except FileNotFoundError:
             print(f"Error: File '{filename}' not found.")
             sys.exit(1)
-    # else:
-    #     content = sys.stdin.read()
+    else:
+        content = sys.stdin.read()
 
     
         flattened_json = gron(content)
